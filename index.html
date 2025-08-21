@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>閃卡學習系統</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+            overflow-x: hidden;
+            user-select: none;
+            position: relative;
+        }
+        
+        /* Trang giới thiệu */
+        .intro-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+            padding: 2rem;
+            text-align: center;
+        }
+        .intro-image {
+            max-width: 300px;
+            margin-bottom: 2rem;
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .intro-title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        .intro-description {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .start-button, .all-cards-button, .random-cards-button {
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 250px;
+        }
+        .start-button {
+            background-color: #4CAF50;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        .start-button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        .all-cards-button {
+            background-color: #2196F3;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        .all-cards-button:hover {
+            background-color: #0b7dda;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+        .random-cards-button {
+            background-color: #FF9800;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        .random-cards-button:hover {
+            background-color: #e68900;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        .start-button i, .all-cards-button i, .random-cards-button i {
+            font-size: 1.2rem;
+        }
+        
+        /* 所有闪卡页面 */
+        .all-cards-page {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f9f9f9;
+            padding: 2rem;
+        }
+        .all-cards-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .back-button {
+            background-color: #666;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .back-button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+        .all-cards-title {
+            font-size: 2rem;
+            color: #333;
+            font-weight: bold;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card-item {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .card-char {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .card-pinyin {
+            font-size: 1.2rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .card-meaning {
+            font-size: 1rem;
+            color: #333;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .start-learning-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+        }
+        .start-learning-button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+        }
+        
+        /* 顶部导航栏 */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .page-info {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .info-item i {
+            font-size: 0.9rem;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+        .options-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .options-btn:hover {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .options-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 200px;
+            margin-top: 0.5rem;
+            display: none;
+            z-index: 1000;
+        }
+        .options-menu.show {
+            display: block;
+        }
+        .menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        .menu-item:hover {
+            background-color: #f8f8f8;
+        }
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        /* 闪卡容器 */
+        .flashcard-container {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            position: relative;
+            perspective: 1000px;
+        }
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            touch-action: none;
+        }
+        .flashcard.dragging {
+            cursor: grabbing;
+            transition: none;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
+            padding: 2rem;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #f9f9f9;
+        }
+        .card-number {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+        .card-content {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .card-pinyin {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .card-meaning {
+            font-size: 1.2rem;
+            color: #333;
+            text-align: center;
+            line-height: 1.6;
+        }
+        /* 发音按钮 */
+        .sound-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .sound-btn:hover {
+            background-color: #f0f0f0;
+            color: #333;
+            transform: scale(1.1);
+        }
+        .sound-btn.playing {
+            color: #4CAF50;
+            animation: pulse 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        /* 翻转提示 */
+        .flip-hint {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #999;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        /* 滑动提示 */
+        .swipe-hints {
+            position: absolute;
+            bottom: -3rem;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2rem;
+            font-size: 0.85rem;
+            color: #999;
+        }
+        /* 滑动反馈 */
+        .swipe-feedback {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .swipe-feedback.show {
+            opacity: 0.8;
+        }
+        .swipe-feedback.known {
+            left: 2rem;
+            color: #4CAF50;
+        }
+        .swipe-feedback.unknown {
+            right: 2rem;
+            color: #f44336;
+        }
+        /* 完成提示 */
+        .completion-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        .completion-message h2 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        .completion-message p {
+            margin-bottom: 1.5rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .stats-summary {
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .stats-row:last-child {
+            margin-bottom: 0;
+        }
+        .stats-label {
+            color: #666;
+        }
+        .stats-value {
+            font-weight: bold;
+        }
+        .completion-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .completion-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .continue-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .continue-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .reset-btn {
+            background-color: #9e9e9e;
+            color: white;
+        }
+        .reset-btn:hover {
+            background-color: #757575;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .home-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        .home-btn:hover {
+            background-color: #0b7dda;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            .flashcard-container {
+                height: 300px;
+            }
+            .card-content {
+                font-size: 3rem;
+            }
+            .card-pinyin {
+                font-size: 1.2rem;
+            }
+            .card-meaning {
+                font-size: 1rem;
+            }
+            .swipe-hints {
+                padding: 0 1rem;
+            }
+            .completion-actions {
+                flex-direction: column;
+            }
+            .page-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .intro-title {
+                font-size: 2rem;
+            }
+            .intro-description {
+                font-size: 1rem;
+            }
+            .intro-image {
+                max-width: 200px;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .button-container {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        /* 动画效果 */
+        @keyframes slideOutRight {
+            0% {
+                transform: translateX(0) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(150%) rotate(-30deg);
+                opacity: 0;
+            }
+        }
+        @keyframes slideOutLeft {
+            0% {
+                transform: translateX(0) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-150%) rotate(30deg);
+                opacity: 0;
+            }
+        }
+        @keyframes slideIn {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .slide-out-right {
+            animation: slideOutRight 0.5s ease-out forwards;
+        }
+        .slide-out-left {
+            animation: slideOutLeft 0.5s ease-out forwards;
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Trang giới thiệu -->
+    <div class="intro-page" id="introPage">
+        <h1 class="intro-title">閃卡學習系統</h1>
+        <p class="intro-description">通過閃卡的方式學習中文漢字，輕鬆記憶，高效學習。向左滑動標記為未掌握，向右滑動標記為已掌握。</p>
+        
+        <div class="button-container">
+            <button class="start-button" onclick="startLearning()">
+                <i class="fas fa-play"></i>
+                開始學習全部漢字
+            </button>
+            <button class="all-cards-button" onclick="showAllCards()">
+                <i class="fas fa-list"></i>
+                查看所有漢字
+            </button>
+            <button class="random-cards-button" onclick="startRandomLearning()">
+                <i class="fas fa-random"></i>
+                隨機學習20個漢字
+            </button>
+        </div>
+    </div>
+    
+    <!-- 所有闪卡页面 -->
+    <div class="all-cards-page" id="allCardsPage">
+        <div class="all-cards-header">
+            <button class="back-button" onclick="backToIntro()">
+                <i class="fas fa-arrow-left"></i>
+                返回
+            </button>
+            <h2 class="all-cards-title">所有漢字</h2>
+            <div></div> <!-- 占位元素，使标题居中 -->
+        </div>
+        
+        <div class="cards-grid" id="cardsGrid">
+            <!-- 卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <button class="start-learning-button" onclick="startLearningFromAllCards()">
+            <i class="fas fa-play"></i>
+            開始學習
+        </button>
+    </div>
+    
+    <!-- 顶部导航栏 -->
+    <header class="header" id="header" style="display: none;">
+        <div class="header-left">
+            <div class="page-info">
+                <div class="info-item">
+                    <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                    <span>已掌握: <span id="knownCount">0</span></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-times-circle" style="color: #f44336;"></i>
+                    <span>未掌握: <span id="unknownCount">24</span></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-hourglass-half" style="color: #2196F3;"></i>
+                    <span>剩餘: <span id="remainingCount">24</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="back-button" onclick="backToIntro()">
+                <i class="fas fa-arrow-left"></i>
+                返回
+            </button>
+        </div>
+    </header>
+    <!-- 主内容区域 -->
+    <main class="main-content" id="mainContent" style="display: none;">
+        <div class="flashcard-container" id="flashcardContainer">
+            <div class="flashcard" id="flashcard">
+                <!-- 卡片正面 -->
+                <div class="card-face card-front" id="cardFront">
+                    <button class="sound-btn" onclick="playSound(event)">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <span class="card-number" id="cardNumber">1/24</span>
+                    <div class="card-content" id="cardContent">不</div>
+                    <div class="flip-hint">點擊翻轉卡片</div>
+                </div>
+                <!-- 卡片背面 -->
+                <div class="card-face card-back">
+                    <button class="sound-btn" onclick="playSound(event)">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <span class="card-number" id="cardNumberBack">1/24</span>
+                    <div class="card-meaning" id="cardMeaning">不；沒有；不是</div>
+                    <div class="card-pinyin" id="cardPinyinBack">bù</div>
+                    <div class="flip-hint">點擊返回</div>
+                </div>
+            </div>
+            
+            <!-- 滑动反馈 -->
+            <div class="swipe-feedback known" id="swipeKnown">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="swipe-feedback unknown" id="swipeUnknown">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            
+            <!-- 滑动提示 -->
+            <div class="swipe-hints">
+            </div>
+        </div>
+        <!-- 完成提示 -->
+        <div class="completion-message" id="completionMessage">
+            <h2>恭喜！</h2>
+            <p>您已經完成了所有單詞的學習。</p>
+            
+            <div class="stats-summary">
+                <div class="stats-row">
+                    <span class="stats-label">總單詞數:</span>
+                    <span class="stats-value" id="totalWords">24</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">已掌握單詞:</span>
+                    <span class="stats-value" id="knownWords">0</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">未掌握單詞:</span>
+                    <span class="stats-value" id="unknownWords">24</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">掌握率:</span>
+                    <span class="stats-value" id="masteryRate">0%</span>
+                </div>
+            </div>
+            
+            <div id="encouragementMessage" class="encouragement"></div>
+            
+            <div class="completion-actions">
+                <button class="completion-btn continue-btn" onclick="continueLearning()">
+                    <i class="fas fa-redo"></i>
+                    繼續學習未掌握單詞
+                </button>
+                <button class="completion-btn reset-btn" onclick="resetAll()">
+                    <i class="fas fa-sync-alt"></i>
+                    重置所有單詞
+                </button>
+                <button class="completion-btn home-btn" onclick="goHome()">
+                    <i class="fas fa-home"></i>
+                    返回首頁
+                </button>
+            </div>
+        </div>
+    </main>
+    <script>
+        // 闪卡数据
+        const originalFlashcards = [
+  { content: '吃', pinyin: 'chī', meaning: 'Ăn', known: false },
+  { content: '喝', pinyin: 'hē', meaning: 'Uống', known: false },
+  { content: '介紹', pinyin: 'jièshào', meaning: 'Giới thiệu', known: false },
+  { content: '知道', pinyin: 'zhīdào', meaning: 'Biết', known: false },
+  { content: '叫', pinyin: 'jiào', meaning: 'Gọi, tên là', known: false },
+  { content: '回答', pinyin: 'huídá', meaning: 'Trả lời', known: false },
+  { content: '進', pinyin: 'jìn', meaning: 'Vào', known: false },
+  { content: '坐', pinyin: 'zuò', meaning: 'Ngồi', known: false },
+  { content: '請', pinyin: 'qǐng', meaning: 'Mời, xin', known: false },
+  { content: '請問', pinyin: 'qǐngwèn', meaning: 'Xin hỏi', known: false },
+  { content: '喜歡', pinyin: 'xǐhuān', meaning: 'Thích', known: false },
+  { content: '去', pinyin: 'qù', meaning: 'Đi', known: false },
+  { content: '來', pinyin: 'lái', meaning: 'Đến', known: false },
+  { content: '回', pinyin: 'huí', meaning: 'Trở về', known: false },
+  { content: '想', pinyin: 'xiǎng', meaning: 'Muốn, nghĩ', known: false },
+  { content: '做', pinyin: 'zuò', meaning: 'Làm', known: false },
+  { content: '起床', pinyin: 'qǐchuáng', meaning: 'Thức dậy', known: false },
+  { content: '洗', pinyin: 'xǐ', meaning: 'Rửa', known: false },
+  { content: '洗臉', pinyin: 'xǐliǎn', meaning: 'Rửa mặt', known: false },
+  { content: '刷牙', pinyin: 'shuāyá', meaning: 'Đánh răng', known: false },
+  { content: '做飯', pinyin: 'zuòfàn', meaning: 'Nấu ăn', known: false },
+  { content: '洗澡', pinyin: 'xǐzǎo', meaning: 'Tắm', known: false },
+  { content: '上班', pinyin: 'shàngbān', meaning: 'Đi làm', known: false },
+  { content: '下班', pinyin: 'xiàbān', meaning: 'Tan làm', known: false },
+  { content: '加班', pinyin: 'jiābān', meaning: 'Làm thêm giờ', known: false },
+  { content: '休息', pinyin: 'xiūxi', meaning: 'Nghỉ ngơi', known: false },
+  { content: '畢業', pinyin: 'bìyè', meaning: 'Tốt nghiệp', known: false },
+  { content: '出生', pinyin: 'chūshēng', meaning: 'Sinh ra', known: false },
+  { content: '結婚', pinyin: 'jiéhūn', meaning: 'Kết hôn', known: false },
+  { content: '看', pinyin: 'kàn', meaning: 'Nhìn, xem', known: false },
+  { content: '買', pinyin: 'mǎi', meaning: 'Mua', known: false },
+  { content: '賣', pinyin: 'mài', meaning: 'Bán', known: false },
+  { content: '送', pinyin: 'sòng', meaning: 'Tặng, đưa', known: false },
+  { content: '給', pinyin: 'gěi', meaning: 'Cho', known: false },
+  { content: '穿', pinyin: 'chuān', meaning: 'Mặc', known: false },
+  { content: '脫', pinyin: 'tuō', meaning: 'Cởi', known: false },
+  { content: '看電視', pinyin: 'kàn diànshì', meaning: 'Xem TV', known: false },
+  { content: '看病', pinyin: 'kànbìng', meaning: 'Khám bệnh', known: false },
+  { content: '看到/看見', pinyin: 'kàndào/kànjiàn', meaning: 'Nhìn thấy', known: false },
+  { content: '見面', pinyin: 'jiànmiàn', meaning: 'Gặp mặt', known: false },
+  { content: '覺得', pinyin: 'juéde', meaning: 'Cảm thấy', known: false },
+  { content: '開', pinyin: 'kāi', meaning: 'Mở', known: false },
+  { content: '關', pinyin: 'guān', meaning: 'Đóng', known: false },
+  { content: '用', pinyin: 'yòng', meaning: 'Dùng', known: false },
+  { content: '聽', pinyin: 'tīng', meaning: 'Nghe', known: false },
+  { content: '說', pinyin: 'shuō', meaning: 'Nói', known: false },
+  { content: '讀', pinyin: 'dú', meaning: 'Đọc', known: false },
+  { content: '寫', pinyin: 'xiě', meaning: 'Viết', known: false },
+  { content: '唱歌', pinyin: 'chànggē', meaning: 'Hát', known: false },
+  { content: '教', pinyin: 'jiāo', meaning: 'Dạy', known: false },
+  { content: '幫', pinyin: 'bāng', meaning: 'Giúp', known: false },
+  { content: '住', pinyin: 'zhù', meaning: 'Ở', known: false },
+  { content: '打', pinyin: 'dǎ', meaning: 'Đánh, chơi (thể thao)', known: false },
+  { content: '踢', pinyin: 'tī', meaning: 'Đá', known: false },
+  { content: '游泳', pinyin: 'yóuyǒng', meaning: 'Bơi lội', known: false },
+  { content: '跑步', pinyin: 'pǎobù', meaning: 'Chạy bộ', known: false },
+  { content: '走路', pinyin: 'zǒulù', meaning: 'Đi bộ', known: false },
+  { content: '散步', pinyin: 'sànbù', meaning: 'Tản bộ', known: false },
+  { content: '說話', pinyin: 'shuōhuà', meaning: 'Nói chuyện', known: false },
+  { content: '騎', pinyin: 'qí', meaning: 'Cưỡi, lái (xe đạp, xe máy)', known: false },
+  { content: '打電話', pinyin: 'dǎ diànhuà', meaning: 'Gọi điện', known: false },
+  { content: '接', pinyin: 'jiē', meaning: 'Nhận', known: false },
+  { content: '接電話', pinyin: 'jiē diànhuà', meaning: 'Nghe điện thoại', known: false },
+  { content: '上網', pinyin: 'shàngwǎng', meaning: 'Lên mạng', known: false },
+  { content: '跳舞', pinyin: 'tiàowǔ', meaning: 'Nhảy múa', known: false },
+  { content: '畫', pinyin: 'huà', meaning: 'Vẽ', known: false },
+  { content: '照相', pinyin: 'zhàoxiàng', meaning: 'Chụp ảnh', known: false },
+  { content: '結束', pinyin: 'jiéshù', meaning: 'Kết thúc', known: false },
+  { content: '開始', pinyin: 'kāishǐ', meaning: 'Bắt đầu', known: false },
+  { content: '完', pinyin: 'wán', meaning: 'Hoàn thành', known: false },
+  { content: '開車', pinyin: 'kāichē', meaning: 'Lái xe', known: false },
+  { content: '等', pinyin: 'děng', meaning: 'Đợi', known: false },
+  { content: '認識', pinyin: 'rènshi', meaning: 'Biết, quen', known: false },
+  { content: '比較', pinyin: 'bǐjiào', meaning: 'So sánh', known: false },
+  { content: '決定', pinyin: 'juédìng', meaning: 'Quyết định', known: false },
+  { content: '記得', pinyin: 'jìde', meaning: 'Nhớ', known: false },
+];
+        
+        // 当前使用的闪卡数据
+        let flashcards = [...originalFlashcards];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let autoPlayInterval = null;
+        let isDragging = false;
+        let startX = 0;
+        let currentX = 0;
+        let cardWidth = 0;
+        let velocity = 0;
+        let lastX = 0;
+        let lastTime = 0;
+        let isSwiping = false;
+        let isAnimating = false;
+        let isCompleted = false;
+        let hasReachedEnd = false;
+        let isLastCardSwiped = false;
+        let isLearningUnknownCards = false;
+        let filteredCards = [...flashcards];
+        
+        // 显示所有闪卡
+        function showAllCards() {
+            document.getElementById('introPage').style.display = 'none';
+            document.getElementById('allCardsPage').style.display = 'flex';
+            
+            // 生成所有卡片
+            const cardsGrid = document.getElementById('cardsGrid');
+            cardsGrid.innerHTML = '';
+            
+            flashcards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card-item';
+                cardElement.innerHTML = `
+                    <div class="card-char">${card.content}</div>
+                    <div class="card-pinyin">${card.pinyin}</div>
+                    <div class="card-meaning">${card.meaning}</div>
+                `;
+                
+                // 点击卡片可以播放发音
+                cardElement.addEventListener('click', function() {
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(card.content);
+                        utterance.lang = 'zh-TW';
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1.0;
+                        speechSynthesis.speak(utterance);
+                    }
+                });
+                
+                cardsGrid.appendChild(cardElement);
+            });
+        }
+        
+        // 从所有卡片页面开始学习
+        function startLearningFromAllCards() {
+            document.getElementById('allCardsPage').style.display = 'none';
+            document.getElementById('header').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'flex';
+            init();
+        }
+        
+        // 返回介绍页面
+        function backToIntro() {
+            document.getElementById('allCardsPage').style.display = 'none';
+            document.getElementById('header').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('introPage').style.display = 'flex';
+            
+            // 重置状态
+            flashcards = [...originalFlashcards];
+            filteredCards = [...flashcards];
+            currentIndex = 0;
+            isFlipped = false;
+            isCompleted = false;
+            hasReachedEnd = false;
+            isLastCardSwiped = false;
+            isLearningUnknownCards = false;
+        }
+        
+        // 随机选择20个汉字开始学习
+        function startRandomLearning() {
+            // 复制原始卡片数据
+            const allCards = [...originalFlashcards];
+            
+            // 随机打乱
+            for (let i = allCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
+            }
+            
+            // 取前20个
+            flashcards = allCards.slice(0, 20);
+            filteredCards = [...flashcards];
+            
+            // 重置状态
+            currentIndex = 0;
+            isFlipped = false;
+            isCompleted = false;
+            hasReachedEnd = false;
+            isLastCardSwiped = false;
+            isLearningUnknownCards = false;
+            
+            // 开始学习
+            document.getElementById('introPage').style.display = 'none';
+            document.getElementById('header').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'flex';
+            init();
+        }
+        
+        // 开始学习（使用所有卡片）
+        function startLearning() {
+            // 重置为所有卡片
+            flashcards = [...originalFlashcards];
+            filteredCards = [...flashcards];
+            
+            // 重置状态
+            currentIndex = 0;
+            isFlipped = false;
+            isCompleted = false;
+            hasReachedEnd = false;
+            isLastCardSwiped = false;
+            isLearningUnknownCards = false;
+            
+            document.getElementById('introPage').style.display = 'none';
+            document.getElementById('header').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'flex';
+            init();
+        }
+        
+        // 返回首页
+        function goHome() {
+            document.getElementById('introPage').style.display = 'flex';
+            document.getElementById('header').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('completionMessage').style.display = 'none';
+            document.getElementById('flashcardContainer').style.display = 'block';
+            isCompleted = false;
+        }
+        
+        // 更新学习状态
+        function updateStatus() {
+            const knownCount = flashcards.filter(card => card.known).length;
+            const unknownCount = flashcards.length - knownCount;
+            
+            // 计算剩余卡片数
+            let remainingCount;
+            if (isLearningUnknownCards) {
+                // 在学习未掌握单词模式下，剩余卡片是当前未掌握卡片中还未学习的数量
+                const unknownCards = flashcards.filter(card => !card.known);
+                const viewedUnknownCards = unknownCards.filter((card, index) => {
+                    const cardIndex = filteredCards.findIndex(c => 
+                        c.content === card.content && c.pinyin === card.pinyin
+                    );
+                    return cardIndex <= currentIndex;
+                });
+                remainingCount = unknownCards.length - viewedUnknownCards.length;
+            } else {
+                // 在学习所有单词模式下，剩余卡片是所有单词中还未学习的数量
+                remainingCount = flashcards.length - (currentIndex + 1);
+            }
+            
+            // 确保剩余卡片数不会小于0
+            remainingCount = Math.max(0, remainingCount);
+            
+            document.getElementById('knownCount').textContent = knownCount;
+            document.getElementById('unknownCount').textContent = unknownCount;
+            document.getElementById('remainingCount').textContent = remainingCount;
+            
+            // 检查是否所有单词都已掌握
+            if (unknownCount === 0 && !isCompleted) {
+                showCompletionMessage();
+            }
+        }
+        // 检查是否完成所有卡片
+        function checkCompletion() {
+            // 检查是否到达当前模式下的最后一张卡片
+            if (currentIndex === filteredCards.length - 1 && !hasReachedEnd) {
+                hasReachedEnd = true;
+                
+                // 检查是否所有卡片都已标记为已知
+                const allKnown = flashcards.every(card => card.known);
+                if (allKnown) {
+                    showCompletionMessage();
+                }
+            }
+        }
+        // 显示完成消息
+        function showCompletionMessage() {
+            isCompleted = true;
+            document.getElementById('flashcardContainer').style.display = 'none';
+            document.getElementById('header').style.display = 'none'; // 隐藏顶部导航栏
+            const completionMessage = document.getElementById('completionMessage');
+            completionMessage.style.display = 'block';
+            completionMessage.classList.add('fade-in');
+            
+            // 更新统计信息
+            updateCompletionStats();
+            
+            // 显示鼓励信息
+            showEncouragement();
+        }
+        // 更新完成统计信息
+        function updateCompletionStats() {
+            const knownCount = flashcards.filter(card => card.known).length;
+            const unknownCount = flashcards.length - knownCount;
+            const masteryRate = Math.round((knownCount / flashcards.length) * 100);
+            
+            document.getElementById('totalWords').textContent = flashcards.length;
+            document.getElementById('knownWords').textContent = knownCount;
+            document.getElementById('unknownWords').textContent = unknownCount;
+            document.getElementById('masteryRate').textContent = masteryRate + '%';
+        }
+        // 显示鼓励信息
+        function showEncouragement() {
+            const knownCount = flashcards.filter(card => card.known).length;
+            const masteryRate = Math.round((knownCount / flashcards.length) * 100);
+            const encouragementMessage = document.getElementById('encouragementMessage');
+            
+            let message = '';
+            
+            if (masteryRate === 100) {
+                message = '<p style="color: #4CAF50; font-weight: bold; margin-top: 1.5rem;">太棒了！您已經完全掌握了所有單詞！</p>';
+            } else if (masteryRate >= 80) {
+                message = '<p style="color: #4CAF50; font-weight: bold; margin-top: 1.5rem;">非常出色！您已經掌握了大部分單詞，繼續加油！</p>';
+            } else if (masteryRate >= 60) {
+                message = '<p style="color: #2196F3; font-weight: bold; margin-top: 1.5rem;">做得很好！您的進步很明顯，再接再厲！</p>';
+            } else if (masteryRate >= 40) {
+                message = '<p style="color: #FF9800; font-weight: bold; margin-top: 1.5rem;">不錯的開始！繼續努力，您會掌握更多單詞！</p>';
+            } else {
+                message = '<p style="color: #f44336; font-weight: bold; margin-top: 1.5rem;">學習是一個過程，堅持下去，您會看到進步！</p>';
+            }
+            
+            encouragementMessage.innerHTML = message;
+        }
+        // 继续学习未掌握单词
+        function continueLearning() {
+            // 过滤出未掌握的单词
+            const unknownCards = flashcards.filter(card => !card.known);
+            
+            if (unknownCards.length === 0) {
+                // 如果没有未掌握的单词，重置所有单词
+                resetAll();
+                return;
+            }
+            
+            // 设置为学习未掌握单词模式
+            isLearningUnknownCards = true;
+            filteredCards = unknownCards;
+            
+            // 重置当前索引
+            currentIndex = 0;
+            
+            // 重置状态标志
+            hasReachedEnd = false;
+            isLastCardSwiped = false;
+            
+            // 显示卡片容器和顶部导航栏，隐藏完成消息
+            document.getElementById('flashcardContainer').style.display = 'block';
+            document.getElementById('header').style.display = 'flex';
+            document.getElementById('completionMessage').style.display = 'none';
+            
+            // 更新卡片
+            updateCard();
+            
+            // 更新状态
+            updateStatus();
+            
+            // 重置完成状态
+            isCompleted = false;
+        }
+        // 重置所有单词
+        function resetAll() {
+            // 重置所有单词的掌握状态
+            flashcards.forEach(card => card.known = false);
+            
+            // 重置为学习所有单词模式
+            isLearningUnknownCards = false;
+            filteredCards = [...flashcards];
+            
+            // 重置当前索引
+            currentIndex = 0;
+            
+            // 重置状态标志
+            hasReachedEnd = false;
+            isLastCardSwiped = false;
+            
+            // 更新状态
+            updateStatus();
+            
+            // 显示卡片容器和顶部导航栏，隐藏完成消息
+            document.getElementById('flashcardContainer').style.display = 'block';
+            document.getElementById('header').style.display = 'flex';
+            document.getElementById('completionMessage').style.display = 'none';
+            
+            // 更新卡片
+            updateCard();
+            
+            // 重置完成状态
+            isCompleted = false;
+        }
+        // 初始化
+        function init() {
+            updateCard();
+            updateStatus();
+            setupSwipeEvents();
+        }
+        // 更新卡片内容
+        function updateCard() {
+            const card = filteredCards[currentIndex];
+            document.getElementById('cardContent').textContent = card.content;
+            document.getElementById('cardMeaning').textContent = card.meaning;
+            document.getElementById('cardPinyinBack').textContent = card.pinyin;
+            
+            // 修正卡片编号显示问题，确保始终从1开始计数
+            const cardNumber = `${currentIndex + 1}/${filteredCards.length}`;
+            document.getElementById('cardNumber').textContent = cardNumber;
+            document.getElementById('cardNumberBack').textContent = cardNumber;
+            
+            // 添加进入动画
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.add('slide-in');
+            setTimeout(() => {
+                flashcard.classList.remove('slide-in');
+                isAnimating = false;
+            }, 500);
+        }
+        // 翻转卡片
+        function flipCard() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+        // 播放发音
+        function playSound(event) {
+            event.stopPropagation();
+            const card = filteredCards[currentIndex];
+            const soundBtn = event.currentTarget;
+            
+            // 添加播放动画
+            soundBtn.classList.add('playing');
+            
+            // 使用 Web Speech API
+            if ('speechSynthesis' in window) {
+                // 取消当前正在播放的语音
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(card.content);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.8; // 调整语速，使发音更清晰
+                utterance.pitch = 1.0; // 调整音调
+                utterance.volume = 1.0; // 调整音量
+                
+                // 尝试使用台湾语音
+                const voices = speechSynthesis.getVoices();
+                const taiwanVoice = voices.find(voice => 
+                    voice.lang.includes('zh-TW') || voice.name.includes('Chinese')
+                );
+                
+                if (taiwanVoice) {
+                    utterance.voice = taiwanVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+                
+                utterance.onend = () => {
+                    soundBtn.classList.remove('playing');
+                    // Sau khi phát âm xong, lật thẻ
+                    flipCard();
+                };
+            } else {
+                // 如果不支持语音合成，使用备用方案
+                setTimeout(() => {
+                    soundBtn.classList.remove('playing');
+                    flipCard();
+                }, 500);
+            }
+        }
+        // 获取声音按钮位置
+        function getSoundButtonPosition() {
+            const soundBtn = document.querySelector('.sound-btn');
+            if (!soundBtn) return null;
+            
+            const rect = soundBtn.getBoundingClientRect();
+            return {
+                left: rect.left,
+                top: rect.top,
+                right: rect.right,
+                bottom: rect.bottom
+            };
+        }
+        // 播放当前卡片发音
+        function playSoundForCurrentCard() {
+            const card = filteredCards[currentIndex];
+            const soundBtn = document.querySelector('.sound-btn');
+            
+            if (soundBtn) {
+                soundBtn.classList.add('playing');
+            }
+            
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(card.content);
+                utterance.lang = 'zh-TW';
+                utterance.rate = 0.8;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                const voices = speechSynthesis.getVoices();
+                const taiwanVoice = voices.find(voice => 
+                    voice.lang.includes('zh-TW') || 
+                    voice.name.includes('Chinese') || 
+                    voice.name.includes('Mandarin')
+                );
+                
+                if (taiwanVoice) {
+                    utterance.voice = taiwanVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+                
+                utterance.onend = () => {
+                    if (soundBtn) {
+                        soundBtn.classList.remove('playing');
+                    }
+                    // Sau khi phát âm xong, lật thẻ
+                    flipCard();
+                };
+            } else {
+                setTimeout(() => {
+                    if (soundBtn) {
+                        soundBtn.classList.remove('playing');
+                    }
+                    flipCard();
+                }, 500);
+            }
+        }
+        // 设置滑动事件
+        function setupSwipeEvents() {
+            const flashcard = document.getElementById('flashcard');
+            
+            // 触摸事件
+            flashcard.addEventListener('touchstart', handleStart, { passive: false });
+            flashcard.addEventListener('touchmove', handleMove, { passive: false });
+            flashcard.addEventListener('touchend', handleEnd);
+            flashcard.addEventListener('touchcancel', handleEnd);
+            
+            // 鼠标事件
+            flashcard.addEventListener('mousedown', handleStart);
+            flashcard.addEventListener('mousemove', handleMove);
+            flashcard.addEventListener('mouseup', handleEnd);
+            flashcard.addEventListener('mouseleave', handleEnd);
+            
+            // 点击事件 - 只在桌面设备上处理
+            flashcard.addEventListener('click', function(event) {
+                // 只在非触摸设备上处理点击事件
+                if (!('ontouchstart' in window)) {
+                    if (!isDragging && !isSwiping && !isAnimating) {
+                        if (!event.target.closest('.sound-btn')) {
+                            flipCard();
+                        }
+                    }
+                }
+            });
+        }
+        // 处理开始
+        function handleStart(e) {
+            if (e.type === 'touchstart') {
+                startX = e.touches[0].clientX;
+            } else {
+                startX = e.clientX;
+            }
+            
+            isDragging = true;
+            isSwiping = false;
+            cardWidth = document.getElementById('flashcard').offsetWidth;
+            lastX = startX;
+            lastTime = Date.now();
+            velocity = 0;
+            
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.add('dragging');
+            flashcard.style.cursor = 'grabbing';
+            
+            e.preventDefault();
+        }
+        // 处理移动
+        function handleMove(e) {
+            if (!isDragging) return;
+            
+            let clientX;
+            if (e.type === 'touchmove') {
+                clientX = e.touches[0].clientX;
+            } else {
+                clientX = e.clientX;
+            }
+            
+            currentX = clientX;
+            const diffX = currentX - startX;
+            
+            // 检查是否开始滑动（移动距离超过阈值）
+            if (Math.abs(diffX) > 10 && !isSwiping) {
+                isSwiping = true;
+            }
+            
+            // 如果正在滑动，则更新卡片位置
+            if (isSwiping) {
+                const rotation = diffX * 0.1; // 旋转角度
+                
+                // 计算速度
+                const currentTime = Date.now();
+                const timeDiff = currentTime - lastTime;
+                if (timeDiff > 0) {
+                    velocity = (currentX - lastX) / timeDiff;
+                }
+                lastX = currentX;
+                lastTime = currentTime;
+                
+                // 应用变换
+                const flashcard = document.getElementById('flashcard');
+                flashcard.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`;
+                
+                // 显示滑动反馈
+                if (diffX > 50) {
+                    showSwipeFeedback('known');
+                } else if (diffX < -50) {
+                    showSwipeFeedback('unknown');
+                } else {
+                    hideSwipeFeedback();
+                }
+            }
+            
+            e.preventDefault();
+        }
+        // 处理结束
+        function handleEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('dragging');
+            flashcard.style.cursor = 'pointer';
+            
+            const diffX = currentX - startX;
+            const threshold = cardWidth * 0.3; // 30% 的卡片宽度
+            const velocityThreshold = 0.5; // 速度阈值
+            
+            // 如果正在滑动，则处理滑动逻辑
+            if (isSwiping) {
+                // 判断是否应该抛出卡片
+                if (Math.abs(diffX) > threshold || Math.abs(velocity) > velocityThreshold) {
+                    isAnimating = true;
+                    if (diffX > 0) {
+                        // 右滑 - 标记为已掌握
+                        throwCard('right');
+                        markAsKnown();
+                    } else {
+                        // 左滑 - 标记为未掌握
+                        throwCard('left');
+                        markAsUnknown();
+                    }
+                    
+                    // 延迟后加载下一张卡片
+                    setTimeout(() => {
+                        resetCardPosition();
+                        
+                        // 检查是否是当前模式下的最后一张卡片
+                        if (currentIndex === filteredCards.length - 1) {
+                            // 如果是最后一张卡片且已经滑动过，显示完成消息
+                            if (isLastCardSwiped) {
+                                // 检查是否所有单词都已掌握
+                                const allKnown = flashcards.every(card => card.known);
+                                if (allKnown) {
+                                    showCompletionMessage();
+                                } else {
+                                    // 如果还有未掌握的单词，显示完成消息但提示可以继续学习
+                                    showCompletionMessage();
+                                }
+                            } else {
+                                // 标记最后一张卡片已滑动
+                                isLastCardSwiped = true;
+                                isAnimating = false;
+                            }
+                        } else {
+                            // 如果不是最后一张，继续下一张
+                            nextCard();
+                            checkCompletion();
+                        }
+                    }, 500);
+                } else {
+                    // 弹回原位
+                    resetCardPosition();
+                }
+                
+                hideSwipeFeedback();
+            } else {
+                // 如果不是滑动，则处理点击/触摸事件
+                // 获取触摸/点击位置
+                let tapX, tapY;
+                
+                if (e.type === 'touchend') {
+                    if (e.changedTouches && e.changedTouches.length > 0) {
+                        tapX = e.changedTouches[0].clientX;
+                        tapY = e.changedTouches[0].clientY;
+                    } else {
+                        // 没有触摸位置信息，重置位置并返回
+                        resetCardPosition();
+                        return;
+                    }
+                } else {
+                    tapX = e.clientX;
+                    tapY = e.clientY;
+                }
+                
+                // 获取声音按钮位置
+                const soundBtnPos = getSoundButtonPosition();
+                
+                // 检查是否点击了声音按钮
+                if (soundBtnPos && 
+                    tapX >= soundBtnPos.left && 
+                    tapX <= soundBtnPos.right && 
+                    tapY >= soundBtnPos.top && 
+                    tapY <= soundBtnPos.bottom) {
+                    // 点击了声音按钮，播放发音
+                    playSoundForCurrentCard();
+                } else {
+                    // 点击了卡片其他区域，翻转卡片
+                    flipCard();
+                }
+                
+                resetCardPosition();
+            }
+            
+            // 重置状态
+            isSwiping = false;
+        }
+        // 抛出卡片
+        function throwCard(direction) {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('slide-in');
+            
+            if (direction === 'right') {
+                flashcard.classList.add('slide-out-right');
+            } else {
+                flashcard.classList.add('slide-out-left');
+            }
+        }
+        // 重置卡片位置
+        function resetCardPosition() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('slide-out-right', 'slide-out-left');
+            flashcard.style.transform = '';
+            flashcard.style.opacity = '1';
+        }
+        // 显示滑动反馈
+        function showSwipeFeedback(type) {
+            const feedback = document.getElementById(`swipe${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            feedback.classList.add('show');
+        }
+        // 隐藏滑动反馈
+        function hideSwipeFeedback() {
+            document.querySelectorAll('.swipe-feedback').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+        // 标记为已掌握
+        function markAsKnown() {
+            const currentCard = filteredCards[currentIndex];
+            // 在原始数据中找到对应的卡片并标记为已掌握
+            const originalCard = flashcards.find(card => 
+                card.content === currentCard.content && 
+                card.pinyin === currentCard.pinyin
+            );
+            if (originalCard) {
+                originalCard.known = true;
+            }
+            updateStatus();
+        }
+        // 标记为未掌握
+        function markAsUnknown() {
+            const currentCard = filteredCards[currentIndex];
+            // 在原始数据中找到对应的卡片并标记为未掌握
+            const originalCard = flashcards.find(card => 
+                card.content === currentCard.content && 
+                card.pinyin === currentCard.pinyin
+            );
+            if (originalCard) {
+                originalCard.known = false;
+            }
+            updateStatus();
+        }
+        // 上一张卡片
+        function previousCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+                if (isFlipped) {
+                    flipCard();
+                }
+            }
+        }
+        // 下一张卡片
+        function nextCard() {
+            if (currentIndex < filteredCards.length - 1) {
+                currentIndex++;
+                updateCard();
+                if (isFlipped) {
+                    flipCard();
+                }
+            }
+        }
+        // 切换选项菜单
+        function toggleOptions() {
+            const menu = document.getElementById('optionsMenu');
+            menu.classList.toggle('show');
+            
+            // 点击其他地方关闭菜单
+            document.addEventListener('click', function closeMenu(e) {
+                if (!e.target.closest('.options-btn') && !e.target.closest('.options-menu')) {
+                    menu.classList.remove('show');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }
+        // 随机排序
+        function shuffleCards() {
+            // 如果正在学习未掌握单词，则只随机排序未掌握单词
+            if (isLearningUnknownCards) {
+                const unknownCards = flashcards.filter(card => !card.known);
+                for (let i = unknownCards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [unknownCards[i], unknownCards[j]] = [unknownCards[j], unknownCards[i]];
+                }
+                filteredCards = unknownCards;
+            } else {
+                // 否则随机排序所有单词
+                for (let i = flashcards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+                }
+                filteredCards = [...flashcards];
+            }
+            
+            currentIndex = 0;
+            updateCard();
+            updateStatus();
+            if (isFlipped) {
+                flipCard();
+            }
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+        // 重置进度
+        function resetProgress() {
+            flashcards.forEach(card => card.known = false);
+            isLearningUnknownCards = false;
+            filteredCards = [...flashcards];
+            currentIndex = 0;
+            hasReachedEnd = false;
+            isLastCardSwiped = false;
+            updateCard();
+            updateStatus();
+            if (isFlipped) {
+                flipCard();
+            }
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+        // 切换自动播放
+        function toggleAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            } else {
+                autoPlayInterval = setInterval(() => {
+                    if (currentIndex < filteredCards.length - 1) {
+                        nextCard();
+                    } else {
+                        clearInterval(autoPlayInterval);
+                        autoPlayInterval = null;
+                    }
+                }, 3000);
+            }
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+        // 显示统计信息
+        function showStats() {
+            const knownCount = flashcards.filter(card => card.known).length;
+            const unknownCount = flashcards.length - knownCount;
+            const percentage = Math.round((knownCount / flashcards.length) * 100);
+            
+            const stats = `
+學習統計：
+總卡片數：${flashcards.length}
+已掌握：${knownCount}
+未掌握：${unknownCount}
+掌握率：${percentage}%
+            `;
+            alert(stats);
+            document.getElementById('optionsMenu').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
